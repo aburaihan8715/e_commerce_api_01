@@ -3,6 +3,14 @@ import mongoose from "mongoose";
 import cors from "cors";
 import "dotenv/config";
 
+import { authRoute } from "./routes/auth.js";
+import { userRoute } from "./routes/user.js";
+import { productRoute } from "./routes/product.js";
+import { cartRoute } from "./routes/cart.js";
+import { orderRoute } from "./routes/order.js";
+import { stripeRoute } from "./routes/stripe.js";
+import { seedRoute } from "./routes/seed.js";
+
 const app = express();
 const serverPort = process.env.SERVER_PORT || 5001;
 
@@ -19,6 +27,15 @@ mongoose
 // middlewares
 app.use(express.json());
 app.use(cors());
+
+app.use("/api/seed", seedRoute);
+
+app.use("/api/auth", authRoute);
+app.use("/api/users", userRoute);
+app.use("/api/products", productRoute);
+app.use("/api/carts", cartRoute);
+app.use("/api/orders", orderRoute);
+app.use("/api/checkout", stripeRoute);
 
 // server running
 app.listen(serverPort, () => {

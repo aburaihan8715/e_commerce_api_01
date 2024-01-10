@@ -10,9 +10,9 @@ router.post("/", verifyTokenAndAdmin, async (req, res) => {
 
   try {
     const savedProduct = await newProduct.save();
-    res.status(200).json(savedProduct);
+    res.status(200).json({ status: "success", message: "product created!", data: savedProduct });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
@@ -26,29 +26,29 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json(updatedProduct);
+    res.status(200).json({ status: "success", message: "product updated!", data: updatedProduct });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
 //DELETE
 router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
   try {
-    await Product.findByIdAndDelete(req.params.id);
-    res.status(200).json("Product has been deleted...");
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
+    res.status(200).json({ status: "success", message: "product deleted!", data: deletedProduct });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
-//GET PRODUCT
+//GET A PRODUCT
 router.get("/find/:id", async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
-    res.status(200).json(product);
+    res.status(200).json({ status: "success", message: "product returned!", data: product });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
@@ -56,9 +56,8 @@ router.get("/find/:id", async (req, res) => {
 router.get("/", async (req, res) => {
   const qNew = req.query.new;
   const qCategory = req.query.category;
+  let products;
   try {
-    let products;
-
     if (qNew) {
       products = await Product.find().sort({ createdAt: -1 }).limit(1);
     } else if (qCategory) {
@@ -70,10 +69,9 @@ router.get("/", async (req, res) => {
     } else {
       products = await Product.find();
     }
-
-    res.status(200).json(products);
+    res.status(200).json({ status: "success", message: "products returned", result: products.length, data: products });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 

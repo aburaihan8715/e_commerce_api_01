@@ -10,9 +10,9 @@ router.post("/", verifyToken, async (req, res) => {
 
   try {
     const savedOrder = await newOrder.save();
-    res.status(200).json(savedOrder);
+    res.status(200).json({ status: "success", message: "order created!", data: savedOrder });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
@@ -26,19 +26,19 @@ router.put("/:id", verifyTokenAndAdmin, async (req, res) => {
       },
       { new: true }
     );
-    res.status(200).json(updatedOrder);
+    res.status(200).json({ status: "success", message: "order updated!", data: updatedOrder });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
 //DELETE
 router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
   try {
-    await Order.findByIdAndDelete(req.params.id);
-    res.status(200).json("Order has been deleted...");
+    const deletedOrder = await Order.findByIdAndDelete(req.params.id);
+    res.status(200).json({ status: "success", message: "order updated!", data: deletedOrder });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
@@ -46,9 +46,9 @@ router.delete("/:id", verifyTokenAndAdmin, async (req, res) => {
 router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
   try {
     const orders = await Order.find({ userId: req.params.userId });
-    res.status(200).json(orders);
+    res.status(200).json({ status: "success", message: "orders returned!", data: orders });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
@@ -56,9 +56,9 @@ router.get("/find/:userId", verifyTokenAndAuthorization, async (req, res) => {
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   try {
     const orders = await Order.find();
-    res.status(200).json(orders);
+    res.status(200).json({ status: "success", message: "orders returned!", data: orders });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
@@ -84,9 +84,9 @@ router.get("/income", verifyTokenAndAdmin, async (req, res) => {
         },
       },
     ]);
-    res.status(200).json(income);
+    res.status(200).json({ status: "success", message: "income returned!", data: income });
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ status: "error", message: "server error" + err });
   }
 });
 
