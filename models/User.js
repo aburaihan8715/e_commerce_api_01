@@ -10,7 +10,12 @@ const UserSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    img: {
+      type: String,
+      default: "",
+    },
   },
+
   { timestamps: true }
 );
 

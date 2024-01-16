@@ -5,7 +5,7 @@ import { verifyTokenAndAdmin } from "./verifyToken.js";
 const router = express.Router();
 
 //CREATE
-router.post("/", verifyTokenAndAdmin, async (req, res) => {
+router.post("/", async (req, res) => {
   const newProduct = new Product(req.body);
 
   try {

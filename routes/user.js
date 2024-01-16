@@ -41,10 +41,11 @@ router.get("/find/:id", verifyTokenAndAdmin, async (req, res) => {
 });
 
 //GET ALL USER
+// TODO: have to (verifyTokenAndAdmin)
 router.get("/", verifyTokenAndAdmin, async (req, res) => {
   const qNew = req.query.new;
   try {
-    const users = qNew ? await User.find().sort({ _id: -1 }).limit(5) : await User.find();
+    const users = qNew ? await User.find().sort({ _id: -1 }).limit(4) : await User.find();
     res.status(200).json({ status: "success", result: users.length, message: "user returned!", data: users });
   } catch (err) {
     res.status(500).json({ status: "error", message: "server error" + err });
