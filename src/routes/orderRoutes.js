@@ -1,4 +1,10 @@
 import express from "express";
+
+const router = express.Router();
+
+export { router as orderRouter };
+/*
+import express from "express";
 import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from "./verifyToken.js";
 import { Order } from "../models/Order.js";
 
@@ -103,3 +109,4 @@ router.get("/income", async (req, res) => {
 });
 
 export { router as orderRoute };
+*/

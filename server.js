@@ -1,3 +1,28 @@
+import mongoose from "mongoose";
+
+import { app } from "./src/app.js";
+import { mongodbLocalUri, serverPort } from "./src/config/variables.js";
+
+// database connection
+mongoose
+  .connect(mongodbLocalUri)
+  .then(() => {
+    console.log("Db is connected");
+    mongoose.connection.on("error", (error) => {
+      console.log("Db connection error", error);
+    });
+  })
+  .catch((error) => {
+    console.log("Db connection failed", error);
+    process.exit(1);
+  });
+
+// server running
+app.listen(serverPort, () => {
+  console.log(`Server running at http://localhost:${serverPort}`);
+});
+
+/*
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
@@ -41,3 +66,4 @@ app.use("/api/checkout", stripeRoute);
 app.listen(serverPort, () => {
   console.log(`Server running at http://localhost:${serverPort}`);
 });
+*/

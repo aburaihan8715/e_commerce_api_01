@@ -1,4 +1,10 @@
 import express from "express";
+
+const router = express.Router();
+
+export { router as productRouter };
+/*
+import express from "express";
 import { Product } from "../models/Product.js";
 import { verifyTokenAndAdmin } from "./verifyToken.js";
 
@@ -76,3 +82,4 @@ router.get("/", async (req, res) => {
 });
 
 export { router as productRoute };
+*/

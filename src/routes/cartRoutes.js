@@ -1,4 +1,11 @@
 import express from "express";
+
+const router = express.Router();
+
+export { router as cartRouter };
+
+/*
+import express from "express";
 import { Cart } from "../models/Cart.js";
 import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from "./verifyToken.js";
 
@@ -63,3 +70,4 @@ router.get("/", verifyTokenAndAdmin, async (req, res) => {
 });
 
 export { router as cartRoute };
+*/

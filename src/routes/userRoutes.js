@@ -1,4 +1,11 @@
 import express from "express";
+
+const router = express.Router();
+
+export { router as userRouter };
+
+/*
+import express from "express";
 import { verifyTokenAndAdmin, verifyTokenAndAuthorization } from "./verifyToken.js";
 import { User } from "../models/User.js";
 import CryptoJS from "crypto-js";
@@ -79,3 +86,4 @@ router.get("/stats", verifyTokenAndAdmin, async (req, res) => {
 });
 
 export { router as userRoute };
+*/
