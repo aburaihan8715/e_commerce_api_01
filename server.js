@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 
 import { app } from "./src/app.js";
-import { mongodbLocalUri, serverPort } from "./src/config/variables.js";
+import { mongodbLocalUri, serverPort } from "./src/config/secret.js";
 
 // database connection
 mongoose

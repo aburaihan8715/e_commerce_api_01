@@ -1,6 +1,14 @@
 import express from "express";
 
+import * as userController from "../controllers/userController.js";
+
 const router = express.Router();
+
+// AUTH RELATED
+router.post("/register", userController.register);
+router.post("/login", userController.login);
+
+// USER RELATED
 
 export { router as userRouter };
 

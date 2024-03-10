@@ -1,6 +1,8 @@
 import express from "express";
 import morgan from "morgan";
 import cors from "cors";
+import createError from "http-errors";
+
 import { userRouter } from "./routes/userRoutes.js";
 import { cartRouter } from "./routes/cartRoutes.js";
 import { orderRouter } from "./routes/orderRoutes.js";
@@ -20,7 +22,18 @@ app.use("/api/v1/orders", orderRouter);
 app.use("/api/v1/products", productRouter);
 
 // HANDLE UNHANDLED ROUTES
-app.all("*", (req, res, next) => {});
+app.all("*", (req, res, next) => {
+  return next(createError(404, `Can not find ${req.originalUrl} on this server`));
+});
 
 // HANDLE ERROR GLOBALLY
-app.use((err, req, res, next) => {});
+app.use((err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = "error";
+  err.message = err.message || "Something went wrong";
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+  });
+});
