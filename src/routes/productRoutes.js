@@ -1,6 +1,25 @@
-import express from "express";
+import express from 'express';
+
+import * as productController from '../controllers/productController.js';
 
 const router = express.Router();
+
+// ALIAS ROUTES
+router.get(
+  '/new-5',
+  productController.aliasNewProducts,
+  productController.getAllProducts
+);
+
+router
+  .route('/')
+  .post(productController.createProduct)
+  .get(productController.getAllProducts);
+router
+  .route('/:id')
+  .get(productController.getProduct)
+  .put(productController.updateProduct)
+  .delete(productController.deleteProduct);
 
 export { router as productRouter };
 /*

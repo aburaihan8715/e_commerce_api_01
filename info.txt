@@ -9,7 +9,7 @@ https://i.ibb.co/cXFnLLV/3.png
 
 
 // category
-woman,coat,jeans
+woman,coat,jeans,man
 
 // color
 white,black,red,blue,yellow,green

@@ -1,14 +1,30 @@
-import express from "express";
+import express from 'express';
 
-import * as userController from "../controllers/userController.js";
+import * as authController from '../controllers/authController.js';
+import * as userController from '../controllers/userController.js';
 
 const router = express.Router();
 
-// AUTH RELATED
-router.post("/register", userController.register);
-router.post("/login", userController.login);
+// ALIAS ROUTES
+router.get('/new-5', userController.aliasNewUsers, userController.getAllUsers);
 
-// USER RELATED
+// AUTH RELATED ROUTES
+router.post('/register', authController.register);
+router.post('/login', authController.login);
+
+// USER RELATED ROUTES
+router.get(
+  '/',
+  authController.verifyAuthentication,
+  authController.verifyAuthorization('admin'),
+  userController.getAllUsers
+);
+router.get('/stats', userController.getUserStats);
+router
+  .route('/:id')
+  .get(userController.getUser)
+  .put(userController.updateUser)
+  .delete(userController.deleteUser);
 
 export { router as userRouter };
 

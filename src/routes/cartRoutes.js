@@ -1,6 +1,19 @@
-import express from "express";
+import express from 'express';
+
+import * as cartController from '../controllers/cartController.js';
 
 const router = express.Router();
+
+router.get('/myCart/:userId', cartController.getMyCart);
+
+router
+  .route('/')
+  .post(cartController.createCart)
+  .get(cartController.getAllCarts);
+router
+  .route('/:id')
+  .put(cartController.updateCart)
+  .delete(cartController.deleteCart);
 
 export { router as cartRouter };
 

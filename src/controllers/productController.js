@@ -1,35 +1,29 @@
-import { Cart } from '../models/cartModel.js';
+import { Product } from '../models/productModel.js';
 
-// GET MY CART
-const getMyCart = async (req, res, next) => {
+// ALIAS
+// NOTE: if query same make alias else make features
+const aliasNewProducts = async (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-createdAt';
+  next();
+};
+
+// CREATE
+const createProduct = async (req, res, next) => {
+  const newProduct = new Product(req.body);
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId });
-    res.status(200).json({
+    const savedProduct = await newProduct.save();
+    res.status(201).json({
       status: 'success',
-      data: cart,
+      data: savedProduct,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// CREATE CART
-const createCart = async (req, res, next) => {
-  const newCart = new Cart(req.body);
-
-  try {
-    const savedCart = await newCart.save();
-    res.status(200).json({
-      status: 'success',
-      data: savedCart,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// GET ALL CART
-const getAllCarts = async (req, res, next) => {
+// GET ALL PRODUCT
+const getAllProducts = async (req, res, next) => {
   try {
     // BUILD QUERY
     // 1A) Filtering
@@ -48,7 +42,7 @@ const getAllCarts = async (req, res, next) => {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
-    let query = Cart.find(JSON.parse(queryStr));
+    let query = Product.find(JSON.parse(queryStr));
 
     // 2) searching
     if (req.query.search) {
@@ -64,6 +58,11 @@ const getAllCarts = async (req, res, next) => {
         ],
       };
       query = query.find(queryBySearch);
+    }
+
+    // 3) category
+    if (req.query.category) {
+      query = query.find({ categories: { $in: [req.query.category] } });
     }
 
     // 4) Sorting
@@ -90,41 +89,39 @@ const getAllCarts = async (req, res, next) => {
     query = query.skip(skip).limit(limit);
 
     if (req.query.page) {
-      const numCarts = await Cart.countDocuments();
-      if (skip >= numCarts) throw createError(404, 'This page does not exist!');
+      const numProducts = await Product.countDocuments();
+      if (skip >= numProducts)
+        throw createError(404, 'This page does not exist!');
     }
 
     // EXECUTE QUERY
-    const carts = await query;
+    const products = await query;
 
     // SEND RESPONSE
     res.status(200).json({
       status: 'success',
-      results: carts.length,
-      data: carts,
+      results: products.length,
+      data: products,
     });
   } catch (error) {
     next(error);
   }
 };
 
-// GET CART
-const getCart = async (req, res, next) => {
+// GET PRODUCT
+const getProduct = async (req, res, next) => {
   try {
-    const cart = await Cart.findOne({ userId: req.params.userId });
-    res.status(200).json({
-      status: 'success',
-      data: cart,
-    });
+    const product = await Product.findById(req.params.id);
+    res.status(200).json({ status: 'success', data: product });
   } catch (error) {
     next(error);
   }
 };
 
-// UPDATE CART
-const updateCart = async (req, res, next) => {
+// UPDATE PRODUCT
+const updateProduct = async (req, res, next) => {
   try {
-    const updatedCart = await Cart.findByIdAndUpdate(
+    const updatedProduct = await Product.findByIdAndUpdate(
       req.params.id,
       {
         $set: req.body,
@@ -133,24 +130,30 @@ const updateCart = async (req, res, next) => {
     );
     res.status(200).json({
       status: 'success',
-      data: updatedCart,
+      data: updatedProduct,
     });
   } catch (error) {
     next(error);
   }
 };
-
-// DELETE CART
-const deleteCart = async (req, res, next) => {
+// DELETE PRODUCT
+const deleteProduct = async (req, res, next) => {
   try {
-    const deletedCart = await Cart.findByIdAndDelete(req.params.id);
+    const deletedProduct = await Product.findByIdAndDelete(req.params.id);
     res.status(200).json({
       status: 'success',
-      data: deletedCart,
+      data: deletedProduct,
     });
   } catch (error) {
     next(error);
   }
 };
 
-export { createCart, getAllCarts, getMyCart, updateCart, deleteCart, getCart };
+export {
+  createProduct,
+  getAllProducts,
+  getProduct,
+  updateProduct,
+  deleteProduct,
+  aliasNewProducts,
+};
