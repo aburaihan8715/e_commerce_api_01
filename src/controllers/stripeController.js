@@ -1,7 +1,8 @@
 import Stripe from 'stripe';
+import { stripeSecretKey } from '../config/secret.js';
 
 // TODO: have to pass my stripe key
-const stripe = new Stripe(process.env.STRIPE_KEY);
+const stripe = new Stripe(stripeSecretKey);
 
 const createPayment = async (req, res, next) => {
   stripe.charges.create(
@@ -12,9 +13,12 @@ const createPayment = async (req, res, next) => {
     },
     (stripeErr, stripeRes) => {
       if (stripeErr) {
-        res.status(500).json(stripeErr);
+        next(stripeErr);
       } else {
-        res.status(200).json(stripeRes);
+        res.status(200).json({
+          status: 'success',
+          data: stripeRes,
+        });
       }
     }
   );

@@ -5,6 +5,7 @@ import * as orderController from '../controllers/orderController.js';
 const router = express.Router();
 
 router.get('/myOrders', orderController.getMyOrders);
+router.get('/income', orderController.getMonthlyIncome);
 
 router
   .route('/')
