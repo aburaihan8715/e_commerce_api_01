@@ -1,6 +1,6 @@
 import express from 'express';
 
-import * as authController from '../controllers/authController.js';
+import * as auth from '../middlewares/auth.js';
 import * as userController from '../controllers/userController.js';
 
 const router = express.Router();
@@ -16,7 +16,7 @@ router.post('/login', authController.login);
 router.get(
   '/',
   authController.verifyAuthentication,
-  authController.verifyAuthorization('admin'),
+  auth.verifyAuthorization('admin'),
   userController.getAllUsers
 );
 router.get('/stats', userController.getUserStats);

@@ -1,16 +1,14 @@
-import express from "express";
-import Stripe from "stripe";
+import Stripe from 'stripe';
 
 // TODO: have to pass my stripe key
 const stripe = new Stripe(process.env.STRIPE_KEY);
-const router = express.Router();
 
-router.post("/payment", (req, res) => {
+const createPayment = async (req, res, next) => {
   stripe.charges.create(
     {
       source: req.body.tokenId,
       amount: req.body.amount,
-      currency: "usd",
+      currency: 'usd',
     },
     (stripeErr, stripeRes) => {
       if (stripeErr) {
@@ -20,6 +18,6 @@ router.post("/payment", (req, res) => {
       }
     }
   );
-});
+};
 
-export { router as stripeRoute };
+export { createPayment };
