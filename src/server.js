@@ -1,25 +1,25 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
-import { app } from "./src/app.js";
-import { mongodbLocalUri, serverPort } from "./src/config/secret.js";
+import { app } from './app.js';
+import config from './config/index.js';
 
 // database connection
 mongoose
-  .connect(mongodbLocalUri)
+  .connect(config.mongodb_url)
   .then(() => {
-    console.log("Db is connected");
-    mongoose.connection.on("error", (error) => {
-      console.log("Db connection error", error);
+    console.log('Db is connected');
+    mongoose.connection.on('error', (error) => {
+      console.log('Db connection error', error);
     });
   })
   .catch((error) => {
-    console.log("Db connection failed", error);
+    console.log('Db connection failed', error);
     process.exit(1);
   });
 
 // server running
-app.listen(serverPort, () => {
-  console.log(`Server running at http://localhost:${serverPort}`);
+app.listen(config.port, () => {
+  console.log(`Server running at http://localhost:${config.port}`);
 });
 
 /*

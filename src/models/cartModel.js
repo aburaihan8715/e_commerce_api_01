@@ -1,22 +1,29 @@
-import mongoose from "mongoose";
-import { Schema } from "mongoose";
+import mongoose from 'mongoose';
+import { Schema } from 'mongoose';
 
 const CartSchema = new Schema(
   {
-    userId: { type: String, required: true },
+    userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
     products: [
       {
         productId: {
-          type: String,
+          type: Schema.Types.ObjectId,
+          ref: 'Product',
+          required: true,
         },
         quantity: {
           type: Number,
           default: 1,
+          min: 1,
         },
       },
     ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-export const Cart = mongoose.models.Cart || mongoose.model("Cart", CartSchema);
+// Indexing userId for faster queries
+CartSchema.index({ userId: 1 });
+
+export const Cart =
+  mongoose.models.Cart || mongoose.model('Cart', CartSchema);
