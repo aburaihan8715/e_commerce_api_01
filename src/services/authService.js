@@ -1,8 +1,8 @@
-import AppError from '../errors/AppError';
-import { User } from '../models/userModel';
+import AppError from '../errors/AppError.js';
+import { User } from '../models/userModel.js';
 import httpStatus from 'http-status';
-import { createToken } from '../utils/createToken';
-import config from '../config';
+import { createToken } from '../utils/createToken.js';
+import engConfig from '../config/engConfig.js';
 
 // REGISTER OR CREATE USER
 const registerIntoDB = async (payload) => {
@@ -55,14 +55,14 @@ const loginFromDB = async (payload) => {
 
   const accessToken = createToken(
     jwtPayload,
-    config.jwt_access_secret,
-    config.jwt_access_expires_in,
+    engConfig.jwt_access_secret,
+    engConfig.jwt_access_expires_in,
   );
 
   const refreshToken = createToken(
     jwtPayload,
-    config.jwt_refresh_secret,
-    config.jwt_refresh_expires_in,
+    engConfig.jwt_refresh_secret,
+    engConfig.jwt_refresh_expires_in,
   );
 
   // 05. delete password form the user

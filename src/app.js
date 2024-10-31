@@ -3,15 +3,11 @@ import morgan from 'morgan';
 import cors from 'cors';
 import httpStatus from 'http-status';
 
-import { AuthRoutes } from './routes/authRotes.js';
+import { AuthRoutes } from './routes/authRote.js';
 
-import { userRouter } from './routes/userRoutes.js';
-import { cartRouter } from './routes/cartRoutes.js';
-import { orderRouter } from './routes/orderRoutes.js';
-import { productRouter } from './routes/productRoutes.js';
-import { stripeRouter } from './routes/stripeRoutes.js';
 import notFoundRouteHandler from './middlewares/notFoundRouteHandler.js';
 import globalErrorHandler from './middlewares/globalErrorHandler.js';
+import { ProductRoutes } from './routes/productRoute.js';
 
 export const app = express();
 
@@ -40,12 +36,13 @@ app.get('/', (req, res) => {
 
 // ROUTES
 app.use('/api/v1/auth', AuthRoutes);
+app.use('/api/v1/products', ProductRoutes);
 
-app.use('/api/v1/users', userRouter);
-app.use('/api/v1/carts', cartRouter);
-app.use('/api/v1/orders', orderRouter);
-app.use('/api/v1/products', productRouter);
-app.use('/api/v1/stripe', stripeRouter);
+// app.use('/api/v1/users', userRouter);
+// app.use('/api/v1/carts', cartRouter);
+// app.use('/api/v1/orders', orderRouter);
+// app.use('/api/v1/products', productRouter);
+// app.use('/api/v1/stripe', stripeRouter);
 
 // NOT FOUND ROUTE HANDLER
 app.use(notFoundRouteHandler);

@@ -16,7 +16,6 @@ export default [
       'no-console': 'warn', // Warns when console.log is used
       eqeqeq: 'error', // Enforces the use of strict equality (===)
       curly: ['error', 'all'], // Enforces consistent use of curly braces
-      quotes: ['error', 'single'], // Enforces single quotes for strings
       semi: ['error', 'always'], // Requires semicolons at the end of statements
       'no-unused-vars': [
         'error',

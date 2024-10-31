@@ -1,7 +1,7 @@
 import httpStatus from 'http-status';
 import jwt from 'jsonwebtoken';
 import { promisify } from 'util';
-import AppError from '../errors/AppError';
+import AppError from '../errors/AppError.js';
 export const decodeToken = async (token, secret) => {
   try {
     // return jwt.verify(token, secret);

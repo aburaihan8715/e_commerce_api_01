@@ -1,8 +1,8 @@
 /* eslint-disable no-useless-escape */
 import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
-import config from '../config';
 import bcrypt from 'bcrypt';
+import engConfig from '../config/engConfig.js';
 
 const UserSchema = new Schema(
   {
@@ -29,7 +29,7 @@ const UserSchema = new Schema(
 
       default: false,
     },
-    photo: { type: String, default: null },
+    profilePhoto: { type: String, default: null },
   },
   { timestamps: true },
 );
@@ -46,7 +46,7 @@ UserSchema.pre('save', async function (next) {
   // Hash password with bcrypt
   this.password = await bcrypt.hash(
     this.password,
-    Number(config.bcrypt_salt_rounds) || 10,
+    Number(engConfig.bcrypt_salt_rounds) || 10,
   );
   next();
 });

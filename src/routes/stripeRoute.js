@@ -1,13 +1,3 @@
-import express from 'express';
-
-import * as stripePayment from '../controllers/stripeController.js';
-
-const router = express.Router();
-
-router.post('/createPayment', stripePayment.createPayment);
-
-export { router as stripeRouter };
-
 /*
 import express from "express";
 import Stripe from "stripe";

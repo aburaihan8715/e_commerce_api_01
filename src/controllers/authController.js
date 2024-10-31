@@ -1,8 +1,8 @@
+import engConfig from '../config/engConfig.js';
 import { AuthService } from '../services/authService.js';
 import catchAsync from '../utils/catchAsync.js';
 import sendResponse from '../utils/sendResponse.js';
 import httpStatus from 'http-status';
-import config from '../config/index.js';
 
 // REGISTER OR CREATE USER
 const register = catchAsync(async (req, res, next) => {
@@ -27,7 +27,7 @@ const login = catchAsync(async (req, res, next) => {
   const { refreshToken, accessToken, user } = userInfo;
 
   res.cookie('refreshToken', refreshToken, {
-    secure: config.NODE_ENV === 'production',
+    secure: engConfig.NODE_ENV === 'production',
     httpOnly: true,
   });
 

@@ -1,34 +1,3 @@
-import express from 'express';
-
-import * as verifyAuth from '../middlewares/verifyAuth.js';
-import * as userController from '../controllers/userController.js';
-import * as authController from '../controllers/authController.js';
-
-const router = express.Router();
-
-// ALIAS ROUTES
-router.get('/new-5', userController.aliasNewUsers, userController.getAllUsers);
-
-// AUTH RELATED ROUTES
-router.post('/register', authController.register);
-router.post('/login', authController.login);
-
-// USER RELATED ROUTES
-router.get(
-  '/',
-  verifyAuth.verifyAuthentication,
-  verifyAuth.verifyAuthorization('admin'),
-  userController.getAllUsers
-);
-router.get('/stats', userController.getUserStats);
-router
-  .route('/:id')
-  .get(userController.getUser)
-  .put(userController.updateUser)
-  .delete(userController.deleteUser);
-
-export { router as userRouter };
-
 /*
 import express from "express";
 import { verifyTokenAndAdmin, verifyTokenAndAuthorization } from "./verifyToken.js";

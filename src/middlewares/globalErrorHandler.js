@@ -1,10 +1,11 @@
 import { ZodError } from 'zod';
-import handleZodError from '../errors/handleZodError';
-import config from '../config';
-import handleValidationError from '../errors/handleValidationError';
-import handleCastError from '../errors/handleCastError';
-import handleDuplicateError from '../errors/handleDuplicateError';
-import AppError from '../errors/AppError';
+import handleZodError from '../errors/handleZodError.js';
+
+import handleValidationError from '../errors/handleValidationError.js';
+import handleCastError from '../errors/handleCastError.js';
+import handleDuplicateError from '../errors/handleDuplicateError.js';
+import AppError from '../errors/AppError.js';
+import engConfig from '../config/engConfig.js';
 
 const globalErrorHandler = (err, req, res, next) => {
   //setting default values
@@ -61,7 +62,7 @@ const globalErrorHandler = (err, req, res, next) => {
     message,
     errorSources,
     err,
-    stack: config.NODE_ENV === 'development' ? err?.stack : null,
+    stack: engConfig.NODE_ENV === 'development' ? err?.stack : null,
   });
 };
 

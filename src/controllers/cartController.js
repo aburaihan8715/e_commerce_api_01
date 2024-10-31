@@ -1,3 +1,5 @@
+/*
+
 import { Cart } from '../models/cartModel.js';
 
 // GET MY CART
@@ -154,3 +156,4 @@ const deleteCart = async (req, res, next) => {
 };
 
 export { createCart, getAllCarts, getMyCart, updateCart, deleteCart, getCart };
+*/

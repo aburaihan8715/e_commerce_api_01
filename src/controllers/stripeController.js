@@ -1,3 +1,4 @@
+/*
 import Stripe from 'stripe';
 import { stripeSecretKey } from '../config/index.js';
 
@@ -25,3 +26,4 @@ const createPayment = async (req, res, next) => {
 };
 
 export { createPayment };
+*/

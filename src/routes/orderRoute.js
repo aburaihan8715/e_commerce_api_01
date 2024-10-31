@@ -1,23 +1,3 @@
-import express from 'express';
-
-import * as orderController from '../controllers/orderController.js';
-
-const router = express.Router();
-
-router.get('/myOrders', orderController.getMyOrders);
-router.get('/income', orderController.getMonthlyIncome);
-
-router
-  .route('/')
-  .post(orderController.createOrder)
-  .get(orderController.getAllOrders);
-router
-  .route('/:id')
-  .get(orderController.getOrder)
-  .put(orderController.updateOrder)
-  .delete(orderController.deleteOrder);
-
-export { router as orderRouter };
 /*
 import express from "express";
 import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from "./verifyToken.js";

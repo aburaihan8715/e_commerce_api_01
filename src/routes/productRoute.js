@@ -1,27 +1,26 @@
 import express from 'express';
-
-import * as productController from '../controllers/productController.js';
+import { ProductController } from '../controllers/productController.js';
 
 const router = express.Router();
 
 // ALIAS ROUTES
 router.get(
-  '/new-5',
-  productController.aliasNewProducts,
-  productController.getAllProducts
+  '/top-5-products',
+  ProductController.aliasProducts,
+  ProductController.getAllProducts,
 );
 
 router
   .route('/')
-  .post(productController.createProduct)
-  .get(productController.getAllProducts);
+  .post(ProductController.createProduct)
+  .get(ProductController.getAllProducts);
 router
   .route('/:id')
-  .get(productController.getProduct)
-  .put(productController.updateProduct)
-  .delete(productController.deleteProduct);
+  .get(ProductController.getSingleProduct)
+  .put(ProductController.updateProduct)
+  .delete(ProductController.deleteProduct);
 
-export { router as productRouter };
+export const ProductRoutes = router;
 /*
 import express from "express";
 import { Product } from "../models/Product.js";

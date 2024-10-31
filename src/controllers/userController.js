@@ -1,3 +1,4 @@
+/*
 import bcrypt from 'bcryptjs';
 import createError from 'http-errors';
 
@@ -165,3 +166,4 @@ export {
   getUserStats,
   aliasNewUsers,
 };
+*/
