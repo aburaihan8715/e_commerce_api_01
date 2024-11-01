@@ -2,7 +2,7 @@
 import mongoose from 'mongoose';
 import { Schema } from 'mongoose';
 import bcrypt from 'bcrypt';
-import engConfig from '../config/engConfig.js';
+import envConfig from '../config/envConfig.js';
 
 const UserSchema = new Schema(
   {
@@ -19,6 +19,9 @@ const UserSchema = new Schema(
       minlength: 6,
       select: false,
     },
+    passwordChangedAt: {
+      type: Date,
+    },
     role: {
       type: String,
       enum: ['user', 'admin'],
@@ -29,7 +32,7 @@ const UserSchema = new Schema(
 
       default: false,
     },
-    profilePhoto: { type: String, default: null },
+    profilePicture: { type: String, default: null },
   },
   { timestamps: true },
 );
@@ -46,7 +49,7 @@ UserSchema.pre('save', async function (next) {
   // Hash password with bcrypt
   this.password = await bcrypt.hash(
     this.password,
-    Number(engConfig.bcrypt_salt_rounds) || 10,
+    Number(envConfig.bcrypt_salt_rounds) || 10,
   );
   next();
 });

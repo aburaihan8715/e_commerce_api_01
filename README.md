@@ -1,2 +1,8 @@
 # e_commerce_api_01
-# react_e_commerce_api_by_lama
+
+## API Endpoints
+
+## Auth:
+
+- /api/v1/auth/login(POST)
+- /api/v1/auth/register(POST)

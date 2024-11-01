@@ -5,7 +5,7 @@ import handleValidationError from '../errors/handleValidationError.js';
 import handleCastError from '../errors/handleCastError.js';
 import handleDuplicateError from '../errors/handleDuplicateError.js';
 import AppError from '../errors/AppError.js';
-import engConfig from '../config/engConfig.js';
+import envConfig from '../config/envConfig.js';
 
 const globalErrorHandler = (err, req, res, next) => {
   //setting default values
@@ -62,7 +62,7 @@ const globalErrorHandler = (err, req, res, next) => {
     message,
     errorSources,
     err,
-    stack: engConfig.NODE_ENV === 'development' ? err?.stack : null,
+    stack: envConfig.NODE_ENV === 'development' ? err?.stack : null,
   });
 };
 

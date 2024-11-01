@@ -3,7 +3,7 @@ import AppError from '../errors/AppError.js';
 import { User } from '../modules/user/user.model.js';
 import catchAsync from '../utils/catchAsync.js';
 import { decodeToken } from '../utils/decodeToken.js';
-import engConfig from '../config/engConfig.js';
+import envConfig from '../config/envConfig.js';
 
 const auth = (...requiredRoles) => {
   return catchAsync(async (req, res, next) => {
@@ -26,7 +26,7 @@ const auth = (...requiredRoles) => {
     // 02 Decode the token
     const decodedData = await decodeToken(
       token,
-      engConfig.jwt_access_secret,
+      envConfig.jwt_access_secret,
     );
 
     if (!decodedData) {

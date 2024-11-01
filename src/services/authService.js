@@ -2,7 +2,8 @@ import AppError from '../errors/AppError.js';
 import { User } from '../models/userModel.js';
 import httpStatus from 'http-status';
 import { createToken } from '../utils/createToken.js';
-import engConfig from '../config/engConfig.js';
+import envConfig from '../config/envConfig.js';
+import bcrypt from 'bcrypt';
 
 // REGISTER OR CREATE USER
 const registerIntoDB = async (payload) => {
@@ -55,14 +56,14 @@ const loginFromDB = async (payload) => {
 
   const accessToken = createToken(
     jwtPayload,
-    engConfig.jwt_access_secret,
-    engConfig.jwt_access_expires_in,
+    envConfig.jwt_access_secret,
+    envConfig.jwt_access_expires_in,
   );
 
   const refreshToken = createToken(
     jwtPayload,
-    engConfig.jwt_refresh_secret,
-    engConfig.jwt_refresh_expires_in,
+    envConfig.jwt_refresh_secret,
+    envConfig.jwt_refresh_expires_in,
   );
 
   // 05. delete password form the user
@@ -78,4 +79,97 @@ const loginFromDB = async (payload) => {
   };
 };
 
-export const AuthService = { registerIntoDB, loginFromDB };
+// CHANGE PASSWORD
+const changePasswordIntoDB = async (userId, payload) => {
+  // 01 check user exists
+  const user = await User.getUserById(userId);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found !');
+  }
+
+  // 02 check user is deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User already deleted !');
+  }
+
+  // 03 check password correct
+  const isPasswordCorrect = await User.isPasswordCorrect(
+    payload.currentPassword,
+    user?.password,
+  );
+
+  if (!isPasswordCorrect) {
+    throw new AppError(httpStatus.FORBIDDEN, 'Password do not matched');
+  }
+
+  // 04 hash the new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(envConfig.bcrypt_salt_rounds),
+  );
+
+  // 05 update the new password
+  await User.findByIdAndUpdate(user._id, {
+    password: newHashedPassword,
+    passwordChangedAt: new Date(),
+  });
+
+  // 06 finally return null
+  return null;
+};
+
+// UPDATE PROFILE
+const updateProfileIntoDB = async (userId, payload) => {
+  // 01 check user exists
+  let user = await User.getUserById(userId);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found !');
+  }
+
+  //  02 update the password field
+  user = await User.findByIdAndUpdate(user._id, payload, {
+    new: true,
+  });
+
+  // 03 create accessToken and refreshToken
+  const jwtPayload = {
+    _id: user._id,
+    email: user.email,
+    role: user.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    envConfig.jwt_access_secret,
+    envConfig.jwt_access_expires_in,
+  );
+
+  const refreshToken = createToken(
+    jwtPayload,
+    envConfig.jwt_refresh_secret,
+    envConfig.jwt_refresh_expires_in,
+  );
+
+  // 04 delete password form the user
+  user = user.toObject();
+  delete user.password;
+  delete user.__v;
+
+  // 05 return tokens and user to the controller
+  return {
+    accessToken,
+    refreshToken,
+    user,
+  };
+};
+
+export const AuthService = {
+  registerIntoDB,
+  loginFromDB,
+  changePasswordIntoDB,
+  updateProfileIntoDB,
+};

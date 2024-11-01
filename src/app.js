@@ -8,6 +8,7 @@ import { AuthRoutes } from './routes/authRote.js';
 import notFoundRouteHandler from './middlewares/notFoundRouteHandler.js';
 import globalErrorHandler from './middlewares/globalErrorHandler.js';
 import { ProductRoutes } from './routes/productRoute.js';
+import { UserRoutes } from './routes/userRoute.js';
 
 export const app = express();
 
@@ -36,6 +37,7 @@ app.get('/', (req, res) => {
 
 // ROUTES
 app.use('/api/v1/auth', AuthRoutes);
+app.use('/api/v1/users', UserRoutes);
 app.use('/api/v1/products', ProductRoutes);
 
 // app.use('/api/v1/users', userRouter);

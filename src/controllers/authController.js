@@ -1,4 +1,4 @@
-import engConfig from '../config/engConfig.js';
+import envConfig from '../config/envConfig.js';
 import { AuthService } from '../services/authService.js';
 import catchAsync from '../utils/catchAsync.js';
 import sendResponse from '../utils/sendResponse.js';
@@ -27,7 +27,7 @@ const login = catchAsync(async (req, res, next) => {
   const { refreshToken, accessToken, user } = userInfo;
 
   res.cookie('refreshToken', refreshToken, {
-    secure: engConfig.NODE_ENV === 'production',
+    secure: envConfig.NODE_ENV === 'production',
     httpOnly: true,
   });
 
@@ -39,4 +39,46 @@ const login = catchAsync(async (req, res, next) => {
   });
 });
 
-export const AuthController = { register, login };
+// CHANGE PASSWORD
+const changePassword = catchAsync(async (req, res) => {
+  const { ...passwordData } = req.body;
+  const id = req.user?._id;
+
+  const result = await AuthService.changePasswordIntoDB(id, passwordData);
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Password updated successfully!',
+    data: result,
+  });
+});
+
+// UPDATE PROFILE
+const updateProfile = catchAsync(async (req, res) => {
+  const userId = req.user._id;
+  const userInfo = await AuthService.updateProfileIntoDB(userId, {
+    ...JSON.parse(req.body.data),
+    profilePicture: req.file?.path,
+  });
+
+  const { refreshToken, accessToken, user } = userInfo;
+
+  res.cookie('refreshToken', refreshToken, {
+    secure: envConfig.NODE_ENV === 'production',
+    httpOnly: true,
+  });
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Settings updated successfully',
+    data: { accessToken, refreshToken, user },
+  });
+});
+
+export const AuthController = {
+  register,
+  login,
+  changePassword,
+  updateProfile,
+};

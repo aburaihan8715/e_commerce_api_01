@@ -1,11 +1,11 @@
 import mongoose from 'mongoose';
 
 import { app } from './app.js';
-import engConfig from './config/engConfig.js';
+import envConfig from './config/envConfig.js';
 
 // database connection
 mongoose
-  .connect(engConfig.mongodb_url)
+  .connect(envConfig.mongodb_url)
   .then(() => {
     console.log('Db is connected');
     mongoose.connection.on('error', (error) => {
@@ -18,8 +18,8 @@ mongoose
   });
 
 // server running
-app.listen(engConfig.port, () => {
-  console.log(`Server running at http://localhost:${engConfig.port}`);
+app.listen(envConfig.port, () => {
+  console.log(`Server running at http://localhost:${envConfig.port}`);
 });
 
 /*
