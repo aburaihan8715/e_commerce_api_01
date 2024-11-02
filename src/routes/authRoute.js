@@ -20,4 +20,10 @@ router.patch('/change-password', AuthController.changePassword);
 
 router.patch('/update-profile', AuthController.updateProfile);
 
+router.post('/forget-password', AuthController.forgetPassword);
+
+router.patch('/reset-password', AuthController.resetPassword);
+
+router.post('/refresh-token', AuthController.getAccessTokenByRefreshToken);
+
 export const AuthRoutes = router;

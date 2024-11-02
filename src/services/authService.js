@@ -4,6 +4,8 @@ import httpStatus from 'http-status';
 import { createToken } from '../utils/createToken.js';
 import envConfig from '../config/envConfig.js';
 import bcrypt from 'bcrypt';
+import { decodeToken } from '../utils/decodeToken.js';
+import { sendEmail } from '../utils/sendEmail.js';
 
 // REGISTER OR CREATE USER
 const registerIntoDB = async (payload) => {
@@ -167,9 +169,145 @@ const updateProfileIntoDB = async (userId, payload) => {
   };
 };
 
+// FORGET PASSWORD
+const forgetPasswordEmail = async (email) => {
+  // 01 check user exists
+  const user = await User.getUserByEmail(email);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found !');
+  }
+  // 02 check user already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User already deleted !');
+  }
+
+  // 03 create password reset token
+  const jwtPayload = {
+    _id: user._id,
+    email: user.email,
+    role: user.role,
+  };
+
+  const passwordResetToken = createToken(
+    jwtPayload,
+    envConfig.jwt_password_reset_secret,
+    envConfig.jwt_password_reset_expires_in,
+  );
+
+  // 04 send the reset token to the user email
+  const passwordResetUILink = `${envConfig.reset_pass_ui_link}?id=${user._id}&passwordResetToken=${passwordResetToken} `;
+
+  sendEmail(user.email, passwordResetUILink);
+
+  return null;
+};
+
+// RESET PASSWORD
+const resetPasswordIntoDB = async (payload, passwordResetToken) => {
+  // 01 check user exists
+  const user = await User.getUserById(payload?.id);
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found !');
+  }
+
+  // 02 check user already deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'This user is deleted !');
+  }
+
+  // 03 decode the token and check it
+  const decoded = await decodeToken(
+    passwordResetToken,
+    envConfig.jwt_password_reset_secret,
+  );
+
+  if (payload.id !== decoded._id) {
+    throw new AppError(httpStatus.FORBIDDEN, 'You are forbidden!');
+  }
+
+  // 04 hash the new password
+  const newHashedPassword = await bcrypt.hash(
+    payload.newPassword,
+    Number(envConfig.bcrypt_salt_rounds),
+  );
+
+  //  05 update the password field
+  await User.findByIdAndUpdate(decoded._id, {
+    password: newHashedPassword,
+    passwordChangedAt: new Date(),
+  });
+
+  return null;
+};
+
+// GET ACCESS TOKEN BY REFRESH TOKEN
+const getAccessTokenByRefreshTokenFromServer = async (refreshToken) => {
+  // 01 decode the giver token
+  const decoded = await decodeToken(
+    refreshToken,
+    envConfig.jwt_refresh_secret,
+  );
+
+  const { _id, iat } = decoded;
+
+  // 02 check user exists
+  const user = await User.getUserById(_id);
+
+  if (!user) {
+    throw new AppError(
+      httpStatus.NOT_FOUND,
+      'The user belonging to this token does no longer exist!',
+    );
+  }
+  // 03 check user is deleted
+  const isDeleted = user?.isDeleted;
+
+  if (isDeleted) {
+    throw new AppError(httpStatus.FORBIDDEN, 'User already deleted !');
+  }
+
+  // 04 check password changed after jwt issued
+  if (
+    user.passwordChangedAt &&
+    User.isPasswordChangedAfterJwtIssued(user.passwordChangedAt, iat)
+  ) {
+    throw new AppError(
+      httpStatus.UNAUTHORIZED,
+      'User recently changed password! Please login again.',
+    );
+  }
+
+  // 05 create access token
+  const jwtPayload = {
+    _id: user._id,
+    email: user.email,
+    role: user.role,
+  };
+
+  const accessToken = createToken(
+    jwtPayload,
+    envConfig.jwt_access_secret,
+    envConfig.jwt_access_expires_in,
+  );
+
+  // 06 return the access token
+  return {
+    accessToken,
+  };
+};
+
 export const AuthService = {
   registerIntoDB,
   loginFromDB,
   changePasswordIntoDB,
   updateProfileIntoDB,
+  forgetPasswordEmail,
+  resetPasswordIntoDB,
+  getAccessTokenByRefreshTokenFromServer,
 };
